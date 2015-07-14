@@ -1,6 +1,7 @@
 "use strict";
 
 import React from "react"; // eslint-disable-line no-unused-vars
+import R from "ramda";
 import {
     Badge,
 
@@ -41,12 +42,19 @@ class Demo extends React.Component {
         super(props);
 
         this.state = {
-            sliderValue: 0
+            sliderValue: 0,
+            fields: {
+                defaultValue: "",
+                floatingValue: "",
+                numericValue: ""
+            }
         };
 
         this.handleChange = key => event => {
             const value = event.target.value;
-            this.setState({ [key]: value });
+            this.setState(
+                R.assocPath(R.split(".", key), value, this.state)
+            );
         };
     }
 
@@ -299,7 +307,36 @@ class Demo extends React.Component {
 
             <h2>Text Fields</h2>
 
-            <TextField />
+            <h6>Default text field</h6>
+            <TextField name="defaultTextField"
+                label="I'm standard. Get over it."
+                value={this.state.fields.defaultValue}
+                onChange={this.handleChange("fields.defaultValue")} />
+
+            <h6>Floating text field</h6>
+            <TextField name="floatingTextField"
+                label="I have a floating label ✈"
+                value={this.state.fields.floatingValue}
+                onChange={this.handleChange("fields.floatingValue")}
+                floating="true" />
+
+            <h6>Numeric text field</h6>
+            <TextField name="numericTextField"
+                label="Don't you dare putting anything but a number!"
+                value={this.state.fields.numericValue}
+                onChange={this.handleChange("fields.numericValue")}
+                pattern="-?[0-9]*(\.[0-9]+)?"
+                patternErrorMessage="I told ya..."
+                style={{width: "100%"}} />
+
+            <br/>
+            <div style={{background: "#eee", "padding": "24"}}>
+                <h6>Binding check</h6>
+                <div>default: {this.state.fields.defaultValue}</div>
+                <div>floating: {this.state.fields.floatingValue}</div>
+                <div>numeric: {this.state.fields.numericValue}</div>
+            </div>
+
             <br /><br />
 
 
